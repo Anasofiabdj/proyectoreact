@@ -1,21 +1,32 @@
 import { useEffect, useState } from "react"
 import { mFetch } from "../../utilidades/mFetch"
+import { Link, useParams } from "react-router-dom"
+
 
 
 
 function ItemListContainer({greetings='saludo'}) {
   const [productos, setProductos] =useState ([])
 
+  const {cid} = useParams()
+
   useEffect (()=>{
+    if (cid) {
+      mFetch ()
+      .then (
+        resultado => setProductos (resultado.filter(product => product.category ===cid)))
+      .catch(error => console.log(error))
+      .finally(()=> console.log ('ultimo'))
+
+    }else {
     mFetch ()
     .then (
-      resultado => setProductos (resultado)
-      
-    )
+      resultado => setProductos (resultado))
     .catch(error => console.log(error))
     .finally(()=> console.log ('ultimo'))
-  }, [])
- 
+    }
+  }, [cid]) 
+
   console.log (productos)
   return (
     <>
@@ -34,9 +45,10 @@ function ItemListContainer({greetings='saludo'}) {
              <p> Categoria: {product.category}</p>
              </div>
              <div className= "card-footer">
-            
-             <button className= "btn btn-outline-dark w-100">Ver más</button>
-
+             
+                <Link to={`/details/${product.id}`}>
+                <button className= "btn btn-outline-dark w-100">Ver más</button>
+                </Link>
              </div>
             
               </div>
